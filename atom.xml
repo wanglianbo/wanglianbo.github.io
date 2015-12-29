@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title><![CDATA[wanglinabo's blog]]></title>
+  <subtitle><![CDATA[tech blog]]></subtitle>
+  <link href="/atom.xml" rel="self"/>
+  <link href="http://blog.wanglianbo.com/"/>
+  <updated>2015-12-25T19:01:56.661Z</updated>
+  <id>http://blog.wanglianbo.com/</id>
+  
+  <author>
+    <name><![CDATA[wanglianbo]]></name>
+    
+  </author>
+  
+  <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title><![CDATA[git使用规范和常用命令]]></title>
+    <link href="http://blog.wanglianbo.com/2015/12/26/git%E4%BD%BF%E7%94%A8%E8%A7%84%E8%8C%83%E5%92%8C%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/"/>
+    <id>http://blog.wanglianbo.com/2015/12/26/git使用规范和常用命令/</id>
+    <published>2015-12-25T18:57:59.000Z</published>
+    <updated>2015-12-25T19:01:56.661Z</updated>
+    <content type="html"><![CDATA[<ul>
+<li><strong>git简介</strong></li>
+</ul>
+<p>git是一个分布式版本控制系统，所有的提交都先存储在本地，因此在没有网络时也可以正常提交，等到网络连通时，在将所有的commit全部push到远程仓库即可。<br>git记录的是目录和文件的整体差异，而不是像SVN等其它VCS一样记录的是文件内容具体的差异。<br>查看某一个命令的帮助文档： <code>git help 命令名</code> 或者 <code>git 命令名 --help</code>。<br>输入命令是可以使用 <code>tab键</code> 来补全命令。<br>git自带的图形化工具：<code>gitk</code>，可以在图形化界面中查看git的提交历史和文件内容差异。</p>
+<ul>
+<li><strong>常用配置</strong></li>
+</ul>
+<p>git所有的配置都是通过命令<code>git config</code>来完成的。全局配置文件位于用户的主目录(~/.gitconfig)，每个项目的单独配置文件位于本地仓库目录的.git隐藏目录下。<br>以下为git config常用配置：</p>
+<pre><code>//命令格式： git config --选项 属性名 属性值
+//命令属性后有值则表示设置属性值，没有表示查看属性值
+git config --list //查看当用用户的所有默认配置
+git config user.name &apos;jack&apos;//设置代码提交者
+git config user.email &apos;jack@gmail.com&apos; //设置联系邮箱
+git config core.editor //设置git默认编辑器
+git config merge.tool //设置冲突合并工具
+//其它自定义配置，请参考文档: git config help
+</code></pre><ul>
+<li><strong>仓库介绍</strong></li>
+</ul>
+<p>git仓库分为本地仓库和远程仓库。本地仓库存位于客户端，是存在于服务器上的远程仓库的完整镜像。<br>默认的仓库名字为origin，初次克隆远程仓库时会自动的在本地创建一个mater分支，用来跟踪远程仓库的master分支。</p>
+<p>本地仓库的创建有两种方式：  </p>
+<ol>
+<li>新建一个本地文件夹，使用命令 <code>git init</code> 将它初始化为一个本地git仓库。然后再添加到远程仓库。  </li>
+<li><p>在服务器上创建一个远程仓库，使用命令 <code>git clone</code> 将它克隆到本地。</p>
+<pre><code>//和仓库相关常用命令
+git init //初始化本地仓库
+git clone url //克隆远程仓库
+git remote -v //查看远程仓库详细信息
+git remote add origin url //将本地仓库推送到远程服务器
+git remote rename origin namexxx //将远程仓库名由origin改为namexxx
+git remote rm origin //删除远程仓库
+git remote show origin //查看远程仓库的具体分支信息
+</code></pre></li>
+</ol>
+<ul>
+<li><strong>暂存/提交/推送/拉取</strong></li>
+</ul>
+<p>暂存和提交都是针对项目中文件的变化所做的操作。<br>文件在git中的三种基本状态：<strong><em>已提交</em></strong>、<strong><em>已修改</em></strong>、<strong><em>已暂存</em></strong>。还有一种特殊的文件状态：<strong><em>未跟踪</em></strong>，指的是还没有纳入版本版本管理的新建文件。<br>文件在git中流转的三个区域：<strong><em>工作目录</em></strong>、<strong><em>暂存区</em></strong>、<strong><em>本地仓库</em></strong>。 执行push操作后，文件流转到远程仓库。</p>
+<blockquote>
+<p>暂存(add)：将工作区已修改的文件快照保存到暂存区，等待下一次的提交。<br>提交(commit)：将暂存区保存的文件仓库提交到本地仓库。<br>推送(push)：将本地仓库中新的提交更新到远程仓库。<br>拉取(fetch或者pull)：将远程仓库中的其他人的提交拉取到本地本地仓库。<br>在拉取远程分支的最新内容，推荐使用fetch和merge而不是直接pull，具体请参考<a href="http://www.oschina.net/translate/git-fetch-and-merge" target="_blank" rel="external">详细说明</a>。</p>
+</blockquote>
+<p>暂存和提交常用命令：</p>
+<pre><code>//暂存命令
+git add file //将某一个文件快照添加到暂存区
+git add [-A][.] //将全部已修改文件快照添加到暂存区
+git add -i //使用交互式暂存,可以将工作区的修改按业务逻辑的划分添加到暂存区，使之成为有效提交
+//提交命令
+git commit -m &apos;commit desc&apos; //将暂存区的快照提交到本地仓库
+git commit --amend //修改最后一次提交
+git commit -am &apos;commit desc&apos;//直接将工作区的已修改文件提交到本地仓库
+//推送命令
+git push origin fromLocal:toRemote //将分支上的内容推送的远程仓库的分支，例如：git push origin master:master,注意：master:master中间不能有空格
+//拉取命令
+git pull master //拉取远程master分支到本地的跟踪分支，并自动合并到本地master分支，若遇到冲突则手工合并冲突。
+                  [不建议使用此命令，用git fetch + git rebase 替代]
+git fetch origin fromRemote:toLocal //从远程仓库分支拉取到内容到本地仓库的跟踪分支，等待进一步的手工合并到本地分支。
+</code></pre><ul>
+<li><strong>分支管理</strong></li>
+</ul>
+<p>分支是git最重要和最灵活的一项功能，几乎所有的操作都是在分支上进行的。  </p>
+<blockquote>
+<p>在git中，分支的概念和其它VCS截然不同，分支的本质是一个指针(也可以叫引用),创建一个新分支实际上是新建一个分支指针，它指向当前所在分支的最新一次提交。因此，在git中对分支的创建、删除、修改、切换等操作变得非常高效和迅速。</p>
+</blockquote>
+<p>分支的分类：</p>
+<blockquote>
+<p>本地分支(local)：默认生成的master分支或者在本地创建的自定义分支。<br>跟踪分支(tracked)：无法进行编辑的本地分支，是一个特殊的本地分支，主要用于根据对应远程分支的提交记录。使用fetch命令拉取远程分支的内容就是先将远程分支上的最新提交拷贝到本地，然后移动跟踪分支的指针指向最后一次提交。跟踪分支的名字一般以 <code>remote/origin/</code> 开头。<br>远程分支(remote)：存在于远端仓库的分支，可以分享给其它的协作者。  </p>
+</blockquote>
+<p>分支操作常用命令：  </p>
+<pre><code>//查看分支
+git branch   //不带任何选项表示查看本地分支列表
+           [-a] 查看所有分支
+           [-r] 查看跟踪分支
+//分支操作
+git branch test //创建分支
+git checkout test //切换到新的分支
+git checkout -b test //创建并切换到当前分支
+git branch [-d][-D][-rd] branchName //删除分支，三个选项分表示删除本地分支、强制删除本地分支、删除本地跟踪分支
+//推送和拉取分支
+git push origin master:master//推送本地master分支到远程的master分支
+//拉取所有远程分支
+git fetch origin
+//创建远程分支的本地跟踪分支，可以直接使用git push和git pull 直接推送和拉取内容
+git checkout -b test origin/test //创建test分支来关联远程的test分支
+git checkout --track origin/test //使当前所在分支关联远程的test分支，1.6.2 以上版本的 Git可以使用
+
+git fetch origin master:master //拉取远程分支到本地的跟踪分支等待合并。 **注意**：在当前分支不能使用fetch当前分支的内容。比如：要想fetch master
+                                 分支的最新内容，必须在test分支才能执行fetch命令。 
+git pull master //默认拉取远程master分支到本地并自动合并到master
+git push origin :test //删除远程的test分支(推送一个空分支到远程)，另一种写法：git push origin --delete test
+</code></pre><p>分支的合并(merge)和冲突解决操作：</p>
+<pre><code>//合并操作，假设当前所在分支为master
+git merge test //将test分支合并到当前所在分支master
+//如果合并中遇到hello.txt冲突,手动解决冲突,之后：
+git add hello.txt //将文件标记为冲突已解决 
+//**注意：** git add命令在不同情况表示不同的含义：对未跟踪文件表示将纳入版本管理，对已修改文件表示将文件快照添加到暂存区，对已解决冲突文件表示冲突已解决。
+git commit //最后提交
+</code></pre><p>分支的另一种合并：rebase操作，请参考<a href="http://git-scm.com/book/zh/v2/Git-%E5%88%86%E6%94%AF-%E5%8F%98%E5%9F%BA" target="_blank" rel="external">rebase详细说明</a></p>
+<pre><code>//操作命令,假设当前所在分支为test
+git rebase master //rebase test分支上的提交到master分支
+//遇到冲突后，手动解决冲突，之后操作：
+git add -u //将有冲突的文件标记为：冲突已解决
+git rebase --continue //继续执行rebase,直到完全合并结束。若再次遇到冲突，重复上述步骤
+//如果中途想结束rebase
+git rebae --stop
+
+//交互式rebase：更加灵活的合并方式
+git rebase -i
+</code></pre><ul>
+<li><p><strong>其它常用操作</strong></p>
+<ol>
+<li><p>提交历史<br>在执行了一系列commit后，如果想要查看提交历史，使用命令： <code>git log</code>  </p>
+<pre><code>//查看提交历史常用命令参数，更多请参考帮助文档：git help log
+git log //默认按时间降序列出所有的提交历史
+        [-n]  //查看前n次的提交日志
+        [--pretty] //按一定格式显示提交日志,例如：git log --pretty=oneline,按一行的格式显示日志
+//查看HEAD发生改变的时间列表
+//此命令可以帮助我们恢复任何东西(前提是必须commit过),reflog只是记录自己本地的HEAD移动历史，它还会定期清理(因此，不要指望恢复几个月前的commit)
+git reflog //相关选项和参数可以参考git log命令或者git help reflog
+</code></pre></li>
+<li><p>各种撤销操作<br>恢复或者撤销是git中最常用的操作之一，常用的撤销操作如下：</p>
+<pre><code>git checkout -- filename //将某文件恢复为 存在于上次commit中的 内容
+git checkout -- //将工作区修改恢复为上一次提交的内容
+git checkout &lt;sha&gt; //用来查看所在分支的任何一次提交的代码，之后可以git checkout HEAD或者git checkout branchName(所在分支)来恢复
+
+//其它常用的撤销恢复(undo)的命令
+git revert &lt;SHA&gt;
+    详解：用于撤销一个已经公开(push)的提交。例如，当做了一次commit，并push到远端，然后发现这个commit有误需要撤销，此时先git revert &lt;sha&gt;, 
+         得到与刚刚commit相反的内容,在此修改并commit，覆盖上次一commit的内容，最后push到远端即可。
+git commit --amend -m &apos;注释内容&apos; //覆盖最后一次commit，并产生新的commit对象
+git reset [--hard] HEAD^|&lt;SHA&gt; //重置本地的修改(好像从来没有commit过一样)，用HEAD^来表示重置到上次的提交，上上次用HEAD^^,以此类推。 
+    详解： 默认不带hard参数：将本地git仓库重置到某一次提交，但保留工作区的修改。若加上hard参数表示一并重置工作区的修改。指定重置到某个提交点
+          可以用HEAD+[指定个数的&apos;^&apos;表示]，或者用&lt;SHA&gt;校验和表示。
+</code></pre><p> 详情请参考撤销的<a href="http://blog.jobbole.com/87700/" target="_blank" rel="external">帮助</a>  </p>
+</li>
+<li><p>储藏功能(stash) </p>
+<pre><code>//储藏命令
+git stash list //查看栈中的所有储藏
+git stash //储藏当前分支的工作目录和暂存区
+git stash apply [stash@{1}] //在当前分支上应用储藏,若没有指定参数，默认应用储藏栈中最顶端的储藏，恢复后工作区是干净的，储藏前的修改都被保存
+                              到暂存区
+git stash apply --index //恢复到原来的操作
+git stash drop //删除储藏栈上的储藏，默认删除栈最顶端的那个
+git stash pop //从栈中取出某个储藏并应用
+git stash branch test //恢复储藏的工作然后在新的分支上继续当时的工作
+</code></pre></li>
+</ol>
+</li>
+</ul>
+<pre><code>4. 打标签(tag)  
+</code></pre><p>git可以对某一个时间点的版本打标签用来标识为测试版或者发布版等。下面为常用标签命令：</p>
+<pre><code>        git tag //列出所有的标签
+        git tag l &apos;dev_*&apos; //搜索标签：搜索所有的开发版标签
+        git show tagName //查看某个标签详情
+        //新创建标签有两种：附注标签（annotated）和 轻量标签（lightweight）
+        git tag -a tagName -m &apos;xxxx&apos;//创建附注标签
+        git tag tagName //创建轻量级标签
+        //操作标签
+        git push origin tagName //将标签推送到远端仓库
+        git push origin --tags //将本地所有标签推送到远端仓库
+        git checkout -b branchName tagName //将远程仓库的tagName标签所代表的版本检出到指定的branchName分支上
+        git tag -d tagName //删除本地标签
+        git push origin :tagName //删除远端标签,另一种写法: git push origin --delete tagName
+
+
+5. 其它常用技巧
+
+        git cherry-pick //将分支A上的某一个commit应用的分支B上,操作如下：
+        git checkout branch-A //进入分支A
+        git cherry-pick 92b23c 将B分支上的92b23c应用到分支A上,若无冲突则结束，若有冲突,解决冲突
+        git add -u //标记冲突解决
+        git commit //提交，结束
+
+        //设置commit提交的注释模板，规范开发人员的每一次提交注释，例如：
+           [类型: feature | bug , 级别： A | B | C ,所属业务模块： pay | refund | split ,注释内容： xxxxxxxx]
+</code></pre><ul>
+<li><strong>常见分布式工作流</strong></li>
+</ul>
+<p>一般常见的工作流有三种，请参考<a href="http://git-scm.com/book/zh/v2/%E5%88%86%E5%B8%83%E5%BC%8F-Git-%E5%88%86%E5%B8%83%E5%BC%8F%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B" target="_blank" rel="external">详解</a>：  </p>
+<blockquote>
+<p><strong><em>集中式工作流</em></strong>: 应用最广泛的工作流，大多数开发流程都术语这种类型。<br><strong><em>集成管理者工作流</em></strong>：github上的开源项目使用的就是这种工作流。<br><strong><em>司令官与副官工作流</em></strong>：最不常用的工作流，只有超大型项目才会用到，比如Linux内核开源项目的维护。</p>
+</blockquote>
+<p>基本的集中式工作流演示(可以根据实际开发自定义): </p>
+<pre><code>//初始化克隆远程仓库
+git clone https://github.com/jack/demo.git
+//克隆结束，查看本地分支
+git branch -a //存在一个本地分支，一个跟踪分支
+//创建一个本地dev分支，用于存储开发中的代码和测试代码
+git checkout -b dev //创建并切换到dev分支
+//将本地开发分支推送到远程仓库，用于在小组内共享开发分支
+git push origin dev:dev
+//在本地开发每一个子需求的时候，创建临时分支feature1
+git chekcout -b feature1
+//新增，修改文件来完成需求
+vim somefile.txt
+//提交到仓库
+git status
+git add .
+git commit -m &apos;complete feature1&apos;
+//合并feature1的提交到dev
+git checkout dev
+git merge featrue1 //若有冲突则手动解决冲突
+
+//推送dev到远程仓库前先fetch，看是否有其他协作者提交的代码
+git checkout feature1
+git fetch origin dev:dev
+//如果有则合并
+git checkout dev
+git rebase origin/dev //合并过程有冲突则解决冲突
+
+//合并结束后推送本地dev到远程dev
+git push origin dev:dev
+
+//如果本地dev上的代码测试通过，需要发布1.0版本
+//合并dev到master
+git checkout master
+git merge dev
+//可以选择是否打版本号来标记当前版本所在节点
+git tag version1.0
+//推送master到远程分支,推送前先fetch，操作同dev分支操作一样
+git push origin master:master
+
+//操作结束，可以使用远程仓库master分支上的稳定version1.0进行发布操作。
+</code></pre><ul>
+<li><strong>git学习教程</strong></li>
+</ul>
+<p>官方学习文档：<a href="http://git-scm.com/book/zh/v2" target="_blank" rel="external">http://git-scm.com/book/zh/v2</a><br>猴子都能懂的入门git：<a href="http://backlogtool.com/git-guide/cn/" target="_blank" rel="external">http://backlogtool.com/git-guide/cn/</a><br>Pro git Book： <a href="http://git.oschina.net/progit/" target="_blank" rel="external">http://git.oschina.net/progit/</a></p>
+<ul>
+<li><strong>git工作流最佳实践</strong></li>
+</ul>
+<p>未完待续。。。</p>
+]]></content>
+    <summary type="html">
+    <![CDATA[<ul>
+<li><strong>git简介</strong></li>
+</ul>
+<p>git是一个分布式版本控制系统，所有的提交都先存储在本地，因此在没有网络时也可以正常提交，等到网络连通时，在将所有的commit全部push到远程仓库即可。<br>git记录的是目录和文件]]>
+    </summary>
+    
+      <category term="技术 git" scheme="http://blog.wanglianbo.com/tags/%E6%8A%80%E6%9C%AF-git/"/>
+    
+      <category term="技术" scheme="http://blog.wanglianbo.com/categories/%E6%8A%80%E6%9C%AF/"/>
+    
+  </entry>
+  
+</feed>
